@@ -148,6 +148,7 @@ img { max-width: 100%; }
       <option value="1">Gen 1 · Kanto (#1–151)</option><option value="2">Gen 2 · Johto (#152–251)</option><option value="3">Gen 3 · Hoenn (#252–386)</option><option value="4">Gen 4 · Sinnoh (#387–493)</option><option value="5">Gen 5 · Unova (#494–649)</option><option value="6">Gen 6 · Kalos (#650–721)</option><option value="7">Gen 7 · Alola (#722–809)</option><option value="8">Gen 8 · Galar (#810–905)</option><option value="9">Gen 9 · Paldea (#906–1025)</option>
      </select>
      <button class="secondary" id="randomGeneration" type="button">🎲 Randomise generation</button>
+     <button class="secondary" id="randomPokemon" type="button" style="grid-column:1/-1;width:100%">✨ Randomise Pokémon</button>
     </div>
     <div class="generation-note" id="generationNote" aria-live="polite">Choose a position to roll a generation, then pick a Pokémon.</div>
     <div class="picker-top"><input id="search" placeholder="Search Pokémon in this generation…" autocomplete="off" aria-label="Search Pokémon"><select id="typeFilter" aria-label="Filter Pokémon type"><option value="">All types</option><option>fire</option><option>water</option><option>grass</option><option>electric</option><option>psychic</option><option>fighting</option><option>flying</option><option>dragon</option><option>ice</option><option>ground</option><option>rock</option><option>ghost</option><option>dark</option><option>steel</option><option>fairy</option><option>poison</option><option>bug</option><option>normal</option></select></div>
@@ -192,6 +193,7 @@ const formation=document.getElementById('formation');
 function currentSlots(){return formations[formation.value].lines.flat();}
 function positionCoords(lines){
  const coords=[]; const top=17,bottom=83;
+ // FotMob-like spacing: players use most of the pitch width, while remaining grouped into clear tactical lines.
  lines.forEach((line,i)=>{const y=top+(bottom-top)*(i/(lines.length-1));line.forEach((pos,j)=>{const x=line.length===1?50:20+(60*j/(line.length-1));coords.push({pos,x,y});});});
  return coords;
 }
@@ -275,7 +277,15 @@ function updateSummary(){
 formation.addEventListener('change',()=>{const allowed=currentSlots();const next={};allowed.forEach(s=>{if(team[s])next[s]=team[s];});team=next;selectedSlot=null;document.getElementById('slotLabel').textContent='Select a position';document.getElementById('pickerTitle').textContent='CHOOSE A POKÉMON';document.getElementById('remove').disabled=true;renderPitch();renderList();});
 document.getElementById('search').addEventListener('input',renderList);
 document.getElementById('generationSelect').addEventListener('change',e=>showGeneration(Number(e.target.value)));
-document.getElementById('randomGeneration').addEventListener('click',()=>{const rolled=1+Math.floor(Math.random()*9);showGeneration(rolled,`🎲 Generation rolled: Gen ${rolled} · ${generationNames[rolled]} (${generationRanges[rolled]}). Now choose a Pokémon${selectedSlot?' for '+selectedSlot:''}.`);});
+document.getElementById('randomGeneration').addEventListener('click',()=>{const rolled=1+Math.floor(Math.random()*9);showGeneration(rolled,`🎲 Generation rolled: Gen ${rolled} · ${generationNames[rolled]} (${generationRanges[rolled]}). Now choose a Pokémon${selectedSlot?' for '+selectedSlot:''}, or randomise a Pokémon.`);});
+document.getElementById('randomPokemon').addEventListener('click',()=>{
+ if(!selectedSlot){document.getElementById('generationNote').textContent='First select a position on the pitch, then use Randomise Pokémon to fill it.';return;}
+ const q=document.getElementById('search').value.trim().toLowerCase(),t=document.getElementById('typeFilter').value;
+ const current=pokemonByGeneration[activeGeneration]||[];
+ const candidates=current.filter(p=>(!q||p.name.toLowerCase().includes(q)||String(p.id)===q)&&(!t||(p.types||[p.type]).includes(t))&&!Object.keys(team).some(k=>k!==selectedSlot&&team[k]?.id===p.id));
+ if(!candidates.length){document.getElementById('generationNote').textContent='No available Pokémon match the current search/type filters. Clear or change the filters and try again.';return;}
+ const chosen=candidates[Math.floor(Math.random()*candidates.length)];team[selectedSlot]=chosen;document.getElementById('remove').disabled=false;document.getElementById('slotLabel').textContent=selectedSlot+' · '+chosen.name;document.getElementById('generationNote').textContent=`✨ Random Pokémon: ${chosen.name} (Gen ${activeGeneration}) assigned to ${selectedSlot}. Randomise again or choose a Pokémon manually.`;renderPitch();renderList();
+ });
 document.getElementById('typeFilter').addEventListener('change',async()=>{const type=document.getElementById('typeFilter').value;if(type){document.getElementById('generationNote').textContent='Loading Pokémon types for this generation…';await ensureTypes(activeGeneration);}renderList();});
 document.getElementById('remove').onclick=()=>{if(selectedSlot){delete team[selectedSlot];document.getElementById('remove').disabled=true;renderPitch();renderList();}};
 document.getElementById('clear').onclick=()=>{team={};selectedSlot=null;document.getElementById('slotLabel').textContent='Select a position';document.getElementById('pickerTitle').textContent='CHOOSE A POKÉMON';document.getElementById('generationNote').textContent='Choose a position to roll a generation, then pick a Pokémon.';document.getElementById('remove').disabled=true;renderPitch();renderList();};
