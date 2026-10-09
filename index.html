@@ -125,6 +125,36 @@ img { max-width: 100%; }
   .team-list { grid-template-columns: 1fr; }
 }
 
+
+/* PokéXI visual refresh inspired by the clean, challenge-led layout of 38-0.app */
+:root{--bg:#080b10;--panel:#11161e;--panel2:#171e28;--text:#f5f7fa;--muted:#9ba7b7;--lime:#d7f36a;--line:#29313d;--gold:#d7f36a}
+body{background:radial-gradient(ellipse at 50% -15%,#202a37 0,#0b0f15 46%,#080b10 100%);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:-.012em}
+header{max-width:1320px;padding:22px 24px 18px;border-bottom:1px solid #222a34;margin-bottom:10px}
+.brand{gap:13px}.ball{background:var(--lime);color:#10150a;box-shadow:none;width:42px;height:42px;font-size:22px}
+h1{font-size:clamp(1.6rem,3vw,2.05rem);letter-spacing:-.055em;font-weight:900}.sub{color:#a5afbd;font-size:.83rem}
+.pill{background:#151c25;border-color:#303a47;color:#dbe2eb;padding:7px 11px;font-weight:650}
+main{max-width:1320px;grid-template-columns:minmax(0,1.22fr) minmax(340px,.78fr);gap:16px;padding:12px 24px 32px}
+.panel{background:linear-gradient(160deg,#141a23,#0f141b);border:1px solid #2a323e;border-radius:15px;box-shadow:0 10px 35px #0003}
+.panel-head{padding:15px 17px;border-bottom:1px solid #28303b}.panel-head h2,.summary h2{font-size:.9rem;letter-spacing:.045em;font-weight:850}
+.controls{gap:7px}.controls select,select,input{background:#0c1118;border-color:#333e4c;border-radius:9px;color:#f3f5f8}select,input{padding:10px 11px}
+button{border-radius:9px;font-weight:800;letter-spacing:-.01em;transition:background .15s,border-color .15s,transform .15s}.primary{background:var(--lime);color:#13180b}.primary:hover{background:#e4ff8c}.secondary{background:#1a222d;color:#e7edf5;border:1px solid #35404f}.secondary:hover{background:#232d3a;border-color:#556274}
+.pitch-wrap{padding:12px;background:#0d1319}.pitch{border-radius:10px;border:1px solid #ffffff38;background:repeating-linear-gradient(0deg,#17613f 0,#17613f 11.11%,#1a6844 11.11%,#1a6844 22.22%);box-shadow:inset 0 0 45px #00190d70}.pitch:before,.pitch-mark,.centre-circle,.boxmark,.goal{border-color:#e8f5e777}.slot{width:72px}.slot-card{width:66px;height:66px;border-radius:50%;border:2px solid #d7f36a;background:linear-gradient(145deg,#26313c,#111820);box-shadow:0 4px 12px #0008;margin-bottom:4px}.slot img{width:62px;height:62px}.slot:hover .slot-card,.slot.selected .slot-card{border-color:#fff;box-shadow:0 0 0 4px #d7f36a42,0 5px 14px #0009}.slot .num{background:var(--lime);border:2px solid #17251b}.slot .name{font-size:.72rem;font-weight:850;text-shadow:0 2px 5px #000}.slot .position{font-size:.61rem;color:#f0f7ee}
+.bench{padding:13px 16px;border-top:1px solid #29313c}.bench strong{font-size:.86rem}.bench span{color:#9ba7b7}
+.right-col{gap:16px}.picker{padding:14px}.generation-controls{gap:8px}.generation-controls label{color:#a9b4c2;text-transform:uppercase;letter-spacing:.06em;font-size:.69rem}.generation-controls button{font-size:.76rem}.generation-note{background:#171f29;border-color:#303a47;color:#dbe3ed;border-radius:9px}.picker-top{gap:8px}.pokemon-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;max-height:390px}.poke{background:#151c25;border:1px solid #2c3541;border-radius:10px;padding:8px;gap:9px}.poke:hover{background:#202a35;border-color:#657248}.poke img{width:48px;height:48px}.poke .poke-name{font-size:.8rem}.poke.chosen{border-color:var(--lime);background:#222b1a}.poke:disabled{opacity:.35}.summary{padding:16px}.stats{gap:7px}.stat{background:#171e27;border-color:#2a333e;border-radius:10px;padding:11px}.stat span{font-size:.68rem}.stat strong{font-size:1.15rem}.team-list{gap:7px}.team-item{background:#171e27;border:1px solid #252e39;border-radius:9px;padding:6px 8px}.team-item b{color:var(--lime)}.tip{color:#9aa6b5}.footer{color:#788493}
+@media(max-width:850px){main{grid-template-columns:minmax(0,1fr);padding-left:14px;padding-right:14px}.right-col{display:flex}.pitch{min-height:0;aspect-ratio:.82}}
+@media(max-width:600px){header{padding:16px 13px 13px}.pill{font-size:.7rem}main{padding:9px 9px 22px}.panel-head{padding:12px}.pitch-wrap{padding:6px}.pitch{aspect-ratio:.68}.slot{width:61px}.slot-card{width:52px;height:52px}.slot img{width:49px;height:49px}.slot .name{font-size:.62rem}.slot .position{font-size:.55rem}.pokemon-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.poke{padding:6px}.poke img{width:39px;height:39px}.poke .poke-name{font-size:.73rem}.generation-controls button{white-space:normal}}
+@media(max-width:360px){.slot{width:54px}.slot-card{width:46px;height:46px}.slot img{width:43px;height:43px}.slot .name{font-size:.57rem}.team-list{grid-template-columns:1fr}}
+
+/* Tactical formation refinements: wider than the compact draft, tighter than the original. */
+.pitch { position:relative; }
+.slot { width:74px; }
+.slot-card { margin-bottom:4px; }
+@media (max-width:600px) {
+  .slot { width:61px; }
+}
+@media (max-width:360px) {
+  .slot { width:54px; }
+}
 </style>
 </head>
 <body>
@@ -192,9 +222,22 @@ const pitch=document.getElementById('pitch'), list=document.getElementById('poke
 const formation=document.getElementById('formation');
 function currentSlots(){return formations[formation.value].lines.flat();}
 function positionCoords(lines){
- const coords=[]; const top=17,bottom=83;
- // FotMob-like spacing: players use most of the pitch width, while remaining grouped into clear tactical lines.
- lines.forEach((line,i)=>{const y=top+(bottom-top)*(i/(lines.length-1));line.forEach((pos,j)=>{const x=line.length===1?50:20+(60*j/(line.length-1));coords.push({pos,x,y});});});
+ const coords=[];
+ // Compact, broadcast-style tactical lines: narrow forward pairs, balanced midfield rows,
+ // and a wider back line. Coordinates are percentages of the pitch container.
+ const top=14,bottom=86;
+ const spreadByCount={
+  1:[50],
+  2:[42,58],
+  3:[28,50,72],
+  4:[15,38.3,61.7,85],
+  5:[11,30.5,50,69.5,89]
+ };
+ lines.forEach((line,i)=>{
+  const y=lines.length===1?50:top+(bottom-top)*(i/(lines.length-1));
+  const xs=spreadByCount[line.length]||line.map((_,j)=>50+(j-(line.length-1)/2)*14);
+  line.forEach((pos,j)=>coords.push({pos,x:xs[j],y}));
+ });
  return coords;
 }
 function renderPitch(){
