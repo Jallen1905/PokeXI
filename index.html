@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PokéXI — Build Your Pokémon Football Team</title>
+<style>
+:root{--bg:#0b1220;--panel:#111c2e;--panel2:#17253a;--text:#f4f7fb;--muted:#9fb0c7;--lime:#c8ff5e;--line:#2a3a52;--gold:#ffd166}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#172a42 0,#0b1220 58%);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;color:var(--text);min-height:100vh}
+header{padding:24px 20px 12px;max-width:1200px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px}.ball{width:46px;height:46px;border-radius:50%;background:var(--lime);color:#132016;display:grid;place-items:center;font-size:25px;box-shadow:0 0 28px #c8ff5e30}
+h1{font-size:clamp(1.5rem,3vw,2.3rem);margin:0;letter-spacing:-.04em}.sub{color:var(--muted);font-size:.9rem;margin-top:3px}
+.pill{border:1px solid #40526a;border-radius:999px;padding:8px 12px;color:#dbe7f5;font-size:.78rem}
+main{max-width:1200px;margin:auto;padding:12px 20px 36px;display:grid;grid-template-columns:minmax(0,1.45fr) minmax(300px,.8fr);gap:18px}
+.panel{background:#101b2bdc;border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:0 18px 55px #0002}
+.panel-head{padding:17px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.panel-head h2{font-size:1rem;margin:0}.controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+select,input,button{font:inherit}select,input{background:#0b1422;color:var(--text);border:1px solid #3a4d66;border-radius:10px;padding:10px 12px;outline:none;min-width:0}select:focus,input:focus{border-color:var(--lime)}
+button{border:0;border-radius:10px;padding:10px 13px;font-weight:750;cursor:pointer;transition:transform .15s,filter .15s}button:hover{filter:brightness(1.08);transform:translateY(-1px)}.primary{background:var(--lime);color:#142018}.secondary{background:#263850;color:#e9f2ff;border:1px solid #40536c}
+.pitch-wrap{padding:15px;background:#0d1826}
+.pitch{position:relative;min-height:570px;aspect-ratio: .78;max-height:760px;overflow:hidden;border-radius:14px;border:2px solid #d6f1d655;background:repeating-linear-gradient(0deg,#176844 0,#176844 11.11%,#1a7049 11.11%,#1a7049 22.22%);box-shadow:inset 0 0 40px #062c1d70}
+.pitch:before{content:"";position:absolute;inset:12px;border:2px solid #e4f7e477;pointer-events:none}
+.pitch-mark{position:absolute;left:12px;right:12px;top:50%;border-top:2px solid #e4f7e477}.centre-circle{position:absolute;width:24%;aspect-ratio:1;left:38%;top:38%;border:2px solid #e4f7e477;border-radius:50%}
+.boxmark{position:absolute;left:25%;width:50%;height:14%;border:2px solid #e4f7e477}.boxmark.top{top:12px;border-top:0}.boxmark.bottom{bottom:12px;border-bottom:0}
+.goal{position:absolute;left:38%;width:24%;height:4%;border:2px solid #e4f7e477}.goal.top{top:12px;border-top:0}.goal.bottom{bottom:12px;border-bottom:0}
+.slot{position:absolute;transform:translate(-50%,-50%);width:76px;text-align:center;z-index:2;cursor:pointer;user-select:none}.slot-card{width:76px;height:76px;margin:0 auto 5px;border-radius:18px;border:1px solid #ffffff6b;background:linear-gradient(145deg,#20354b,#0b1728);display:grid;place-items:center;position:relative;box-shadow:0 7px 18px #06130f70;transition:.16s}.slot:hover .slot-card,.slot.selected .slot-card{border:2px solid var(--lime);box-shadow:0 0 0 4px #c8ff5e25,0 7px 18px #06130f70}.slot img{width:72px;height:72px;object-fit:contain;image-rendering:auto;filter:drop-shadow(0 4px 2px #0004)}.slot .num{position:absolute;left:-7px;top:-7px;width:23px;height:23px;border-radius:50%;display:grid;place-items:center;background:var(--lime);color:#122016;font-size:.7rem;font-weight:900;border:2px solid #173d2a}
+.slot .name{font-size:.76rem;font-weight:800;text-shadow:0 2px 4px #001b10;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.slot .position{font-size:.64rem;color:#e0f5e7;text-shadow:0 2px 4px #001b10}.slot.empty .slot-card{border:1px dashed #ffffffb0;background:#0d2e27a8}.slot.empty .plus{font-size:1.7rem;color:#d9f8e4}.slot.empty .name{color:#fff}
+.bench{padding:14px 17px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;border-top:1px solid var(--line)}.bench strong{font-size:.9rem}.bench span{color:var(--muted);font-size:.8rem}
+.right-col{display:flex;flex-direction:column;gap:18px}.picker{padding:15px}.generation-controls{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px;margin-bottom:8px}.generation-controls label{grid-column:1/-1;color:var(--muted);font-size:.78rem;font-weight:700}.generation-controls select{width:100%}.generation-controls button{white-space:nowrap;padding:9px 11px;font-size:.8rem}.generation-note{font-size:.78rem;line-height:1.4;color:#d7e6f7;background:#1a2b40;border:1px solid #304660;border-radius:10px;padding:9px 10px;margin-bottom:10px}.picker-top{display:flex;gap:8px;margin-bottom:12px}.picker-top input{flex:1;width:100%}.picker-top select{width:125px}.pokemon-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;max-height:350px;overflow:auto;padding:2px 4px 4px 2px}
+.poke{background:#142238;border:1px solid #2a3b52;border-radius:13px;padding:8px;display:flex;align-items:center;gap:8px;text-align:left;color:var(--text);min-width:0}.poke img{width:52px;height:52px;object-fit:contain;flex-shrink:0}.poke .poke-name{font-size:.83rem;font-weight:800;text-transform:capitalize;display:block}.poke small{color:var(--muted);font-size:.7rem}.poke.chosen{border-color:var(--lime);background:#243526}.poke:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.empty-state{color:var(--muted);font-size:.88rem;padding:20px;text-align:center;grid-column:1/-1}
+.summary{padding:16px 18px}.summary h2{margin:0 0 14px;font-size:1rem}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{background:#17263b;border:1px solid #293c55;border-radius:12px;padding:12px}.stat span{display:block;color:var(--muted);font-size:.72rem}.stat strong{display:block;font-size:1.25rem;margin-top:4px}.team-list{margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:7px}.team-item{display:flex;align-items:center;gap:7px;background:#121f32;border-radius:9px;padding:6px 8px;font-size:.78rem;min-width:0}.team-item img{width:34px;height:34px;object-fit:contain}.team-item span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.team-item b{color:var(--lime);font-size:.7rem;margin-right:3px}
+.tip{font-size:.78rem;line-height:1.5;color:var(--muted);margin:12px 2px 0}.footer{text-align:center;color:#8294ad;font-size:.75rem;padding:0 18px 24px}
+@media(max-width:850px){main{grid-template-columns:1fr}.pitch{min-height:600px;aspect-ratio:.82}.right-col{display:grid;grid-template-columns:1fr}.pokemon-list{max-height:310px}}
+@media(max-width:480px){header{padding:18px 13px 10px}main{padding:10px 10px 24px;gap:12px}.panel-head{padding:14px}.pitch-wrap{padding:8px}.pitch{min-height:550px}.slot{width:70px}.slot-card{width:58px;height:58px;border-radius:14px}.slot img{width:57px;height:57px}.slot .name{font-size:.66rem}.slot .position{font-size:.57rem}.slot .num{width:20px;height:20px}.picker{padding:11px}.pokemon-list{gap:6px}.poke{padding:6px;gap:4px}.poke img{width:39px;height:39px}.poke .poke-name{font-size:.75rem}.poke small{font-size:.65rem}.team-list{grid-template-columns:1fr 1fr}}
+
+/* Responsive refinements for phones and tablets */
+html { -webkit-text-size-adjust: 100%; }
+body { overflow-x: hidden; }
+button, select, input { touch-action: manipulation; }
+button, .slot, .team-item { -webkit-tap-highlight-color: transparent; }
+img { max-width: 100%; }
+
+@media (max-width: 850px) {
+  header { align-items: flex-start; }
+  main { grid-template-columns: minmax(0, 1fr); }
+  .right-col { display: flex; }
+  .pitch { width: 100%; max-height: none; }
+  .pokemon-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 600px) {
+  header { padding: 16px 12px 10px; gap: 10px; }
+  .brand { gap: 9px; }
+  .ball { width: 38px; height: 38px; font-size: 21px; flex-shrink: 0; }
+  h1 { font-size: 1.55rem; }
+  .sub { font-size: .78rem; }
+  header > .pill { font-size: .68rem; padding: 6px 9px; }
+  main { padding: 8px 8px 22px; gap: 12px; }
+  .panel { border-radius: 15px; }
+  .panel-head { padding: 12px; gap: 9px; }
+  .panel-head h2 { font-size: .9rem; }
+  .controls { width: 100%; gap: 7px; }
+  .controls label { font-size: .78rem; }
+  .controls select { flex: 1; min-width: 95px; }
+  .controls button { padding: 9px 10px; font-size: .8rem; }
+  .pitch-wrap { padding: 6px; }
+  .pitch {
+    min-height: 0;
+    aspect-ratio: .62;
+    height: auto;
+    max-height: none;
+    border-radius: 10px;
+  }
+  .pitch:before { inset: 8px; }
+  .pitch-mark { left: 8px; right: 8px; }
+  .boxmark.top { top: 8px; }
+  .boxmark.bottom { bottom: 8px; }
+  .goal.top { top: 8px; }
+  .goal.bottom { bottom: 8px; }
+  .slot { width: 58px; }
+  .slot-card { width: 46px; height: 46px; margin-bottom: 3px; border-radius: 11px; }
+  .slot img { width: 44px; height: 44px; }
+  .slot .num { width: 18px; height: 18px; left: -3px; top: -4px; font-size: .62rem; }
+  .slot .name { font-size: .61rem; max-width: 58px; margin: 0 auto; }
+  .slot .position { font-size: .56rem; }
+  .bench { padding: 11px 12px; gap: 9px; }
+  .bench strong { font-size: .82rem; }
+  .bench span { font-size: .72rem; }
+  .bench button { padding: 9px 11px; font-size: .8rem; }
+  .picker { padding: 10px; }
+  .generation-controls { grid-template-columns: minmax(0,1fr); }
+  .generation-controls label { grid-column: auto; }
+  .generation-controls button { width: 100%; }
+  .picker-top { display: grid; grid-template-columns: minmax(0, 1fr) 110px; gap: 7px; }
+  .picker-top input, .picker-top select { width: 100%; min-width: 0; padding: 10px 8px; font-size: .86rem; }
+  .pokemon-list { max-height: 360px; gap: 6px; padding: 1px; }
+  .poke { padding: 6px; gap: 4px; border-radius: 10px; }
+  .poke img { width: 36px; height: 36px; }
+  .poke .poke-name { font-size: .73rem; }
+  .poke small { font-size: .62rem; }
+  .tip { font-size: .74rem; }
+  .summary { padding: 13px; }
+  .stats { gap: 6px; }
+  .stat { padding: 9px; }
+  .stat span { font-size: .66rem; }
+  .stat strong { font-size: 1.05rem; }
+  .team-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+  .team-item { padding: 5px; gap: 4px; font-size: .7rem; }
+  .team-item img { width: 29px; height: 29px; }
+}
+
+@media (max-width: 360px) {
+  header > .pill { display: none; }
+  .pitch { aspect-ratio: .56; }
+  .slot { width: 49px; }
+  .slot-card { width: 40px; height: 40px; }
+  .slot img { width: 39px; height: 39px; }
+  .slot .name { max-width: 49px; font-size: .56rem; }
+  .slot .position { font-size: .52rem; }
+  .picker-top { grid-template-columns: minmax(0, 1fr) 96px; }
+  .poke img { width: 31px; height: 31px; }
+  .poke .poke-name { font-size: .68rem; }
+  .poke small { font-size: .58rem; }
+  .team-list { grid-template-columns: 1fr; }
+}
+
+</style>
+</head>
+<body>
+<header>
+ <div class="brand"><div class="ball">⚽</div><div><h1>PokéXI</h1><div class="sub">Build your ultimate Pokémon football team</div></div></div>
+ <div class="pill">11 starters · Your tactics, your team</div>
+</header>
+<main>
+ <section class="panel">
+  <div class="panel-head"><h2>YOUR STARTING XI</h2><div class="controls"><label for="formation" class="sub">Formation</label><select id="formation" aria-label="Choose formation"><option value="4-3-3">4-3-3</option><option value="4-4-2">4-4-2</option><option value="4-2-3-1">4-2-3-1</option><option value="3-5-2">3-5-2</option><option value="3-4-3">3-4-3</option><option value="5-3-2">5-3-2</option><option value="4-1-4-1">4-1-4-1</option></select><button class="secondary" id="clear">Clear team</button></div></div>
+  <div class="pitch-wrap"><div class="pitch" id="pitch"><div class="pitch-mark"></div><div class="centre-circle"></div><div class="boxmark top"></div><div class="boxmark bottom"></div><div class="goal top"></div><div class="goal bottom"></div></div></div>
+  <div class="bench"><div><strong id="teamStatus">0 / 11 selected</strong><br><span>Tap a position, then choose a Pokémon</span></div><button class="primary" id="random">Random XI</button></div>
+ </section>
+ <aside class="right-col">
+  <section class="panel">
+   <div class="panel-head"><h2 id="pickerTitle">CHOOSE A POKÉMON</h2><span class="pill" id="slotLabel">Select a position</span></div>
+   <div class="picker">
+    <div class="generation-controls">
+     <label for="generationSelect">Pokémon generation</label>
+     <select id="generationSelect" aria-label="Choose Pokémon generation">
+      <option value="1">Gen 1 · Kanto (#1–151)</option><option value="2">Gen 2 · Johto (#152–251)</option><option value="3">Gen 3 · Hoenn (#252–386)</option><option value="4">Gen 4 · Sinnoh (#387–493)</option><option value="5">Gen 5 · Unova (#494–649)</option><option value="6">Gen 6 · Kalos (#650–721)</option><option value="7">Gen 7 · Alola (#722–809)</option><option value="8">Gen 8 · Galar (#810–905)</option><option value="9">Gen 9 · Paldea (#906–1025)</option>
+     </select>
+     <button class="secondary" id="randomGeneration" type="button">🎲 Randomise generation</button>
+    </div>
+    <div class="generation-note" id="generationNote" aria-live="polite">Choose a position to roll a generation, then pick a Pokémon.</div>
+    <div class="picker-top"><input id="search" placeholder="Search Pokémon in this generation…" autocomplete="off" aria-label="Search Pokémon"><select id="typeFilter" aria-label="Filter Pokémon type"><option value="">All types</option><option>fire</option><option>water</option><option>grass</option><option>electric</option><option>psychic</option><option>fighting</option><option>flying</option><option>dragon</option><option>ice</option><option>ground</option><option>rock</option><option>ghost</option><option>dark</option><option>steel</option><option>fairy</option><option>poison</option><option>bug</option><option>normal</option></select></div>
+    <div class="pokemon-list" id="pokemonList"><div class="empty-state">Loading Pokémon…</div></div>
+    <p class="tip">Select a position, then choose a generation or roll one at random. Browse or search Pokémon from that generation. One Pokémon can only play one position at a time.</p>
+    <button class="secondary" id="remove" style="width:100%;margin-top:12px" disabled>Remove player from selected position</button>
+   </div>
+  </section>
+  <section class="panel summary">
+   <h2>TEAM SHEET</h2>
+   <div class="stats"><div class="stat"><span>Players</span><strong id="count">0/11</strong></div><div class="stat"><span>Formation</span><strong id="formationStat">4-3-3</strong></div><div class="stat"><span>Positions filled</span><strong id="filled">0%</strong></div></div>
+   <div class="team-list" id="teamList"></div>
+   <p class="tip">Your team updates as you pick Pokémon and change formations. This is a fan-made team builder; player suitability is for fun, not official Pokémon stats.</p>
+   <button class="primary" id="copy" style="width:100%;margin-top:13px">Copy my starting XI</button>
+   <div id="copyMsg" class="tip" aria-live="polite"></div>
+  </section>
+ </aside>
+</main>
+<div class="footer">PokéXI fan concept · Pokémon data loads from PokéAPI · National Pokédex #1–1025 across Generations 1–9.</div>
+<script>
+const formations = {
+ "4-3-3": {lines:[[ "LW","ST","RW" ],["LCM","CM","RCM"],["LB","LCB","RCB","RB"],["GK"]]},
+ "4-4-2": {lines:[["ST","LS"],["LM","LCM","RCM","RM"],["LB","LCB","RCB","RB"],["GK"]]},
+ "4-2-3-1": {lines:[["ST"],["LAM","CAM","RAM"],["LDM","RDM"],["LB","LCB","RCB","RB"],["GK"]]},
+ "3-5-2": {lines:[["ST","LS"],["LWB","LCM","CM","RCM","RWB"],["LCB","CB","RCB"],["GK"]]},
+ "3-4-3": {lines:[["LW","ST","RW"],["LM","LCM","RCM","RM"],["LCB","CB","RCB"],["GK"]]},
+ "5-3-2": {lines:[["ST","LS"],["LCM","CM","RCM"],["LWB","LCB","CB","RCB","RWB"],["GK"]]},
+ "4-1-4-1": {lines:[["ST"],["LM","LCM","RCM","RM"],["CDM"],["LB","LCB","RCB","RB"],["GK"]]}
+};
+const roleNames={GK:"Goalkeeper",ST:"Striker",LS:"Second striker",LW:"Left winger",RW:"Right winger",LM:"Left midfield",RM:"Right midfield",LCM:"Left central mid",CM:"Central midfield",RCM:"Right central mid",CAM:"Attacking mid",LAM:"Left attacking mid",RAM:"Right attacking mid",LDM:"Defensive mid",RDM:"Defensive mid",CDM:"Defensive mid",LB:"Left back",RB:"Right back",LCB:"Left centre-back",RCB:"Right centre-back",CB:"Centre-back",LWB:"Left wing-back",RWB:"Right wing-back"};
+let pokemon = [
+[1,"Bulbasaur","grass"],[2,"Ivysaur","grass"],[3,"Venusaur","grass"],[4,"Charmander","fire"],[5,"Charmeleon","fire"],[6,"Charizard","fire"],[7,"Squirtle","water"],[8,"Wartortle","water"],[9,"Blastoise","water"],[10,"Caterpie","bug"],[11,"Metapod","bug"],[12,"Butterfree","bug"],[13,"Weedle","bug"],[14,"Kakuna","bug"],[15,"Beedrill","bug"],[16,"Pidgey","flying"],[17,"Pidgeotto","flying"],[18,"Pidgeot","flying"],[19,"Rattata","normal"],[20,"Raticate","normal"],[21,"Spearow","normal"],[22,"Fearow","normal"],[23,"Ekans","poison"],[24,"Arbok","poison"],[25,"Pikachu","electric"],[26,"Raichu","electric"],[27,"Sandshrew","ground"],[28,"Sandslash","ground"],[29,"Nidoran♀","poison"],[30,"Nidorina","poison"],[31,"Nidoqueen","poison"],[32,"Nidoran♂","poison"],[33,"Nidorino","poison"],[34,"Nidoking","poison"],[35,"Clefairy","fairy"],[36,"Clefable","fairy"],[37,"Vulpix","fire"],[38,"Ninetales","fire"],[39,"Jigglypuff","normal"],[40,"Wigglytuff","normal"],[41,"Zubat","poison"],[42,"Golbat","poison"],[43,"Oddish","grass"],[44,"Gloom","grass"],[45,"Vileplume","grass"],[46,"Paras","bug"],[47,"Parasect","bug"],[48,"Venonat","bug"],[49,"Venomoth","bug"],[50,"Diglett","ground"],[51,"Dugtrio","ground"],[52,"Meowth","normal"],[53,"Persian","normal"],[54,"Psyduck","water"],[55,"Golduck","water"],[56,"Mankey","fighting"],[57,"Primeape","fighting"],[58,"Growlithe","fire"],[59,"Arcanine","fire"],[60,"Poliwag","water"],[61,"Poliwhirl","water"],[62,"Poliwrath","fighting"],[63,"Abra","psychic"],[64,"Kadabra","psychic"],[65,"Alakazam","psychic"],[66,"Machop","fighting"],[67,"Machoke","fighting"],[68,"Machamp","fighting"],[69,"Bellsprout","grass"],[70,"Weepinbell","grass"],[71,"Victreebel","grass"],[72,"Tentacool","water"],[73,"Tentacruel","water"],[74,"Geodude","rock"],[75,"Graveler","rock"],[76,"Golem","rock"],[77,"Ponyta","fire"],[78,"Rapidash","fire"],[79,"Slowpoke","water"],[80,"Slowbro","water"],[81,"Magnemite","electric"],[82,"Magneton","electric"],[83,"Farfetch'd","normal"],[84,"Doduo","normal"],[85,"Dodrio","normal"],[86,"Seel","water"],[87,"Dewgong","water"],[88,"Grimer","poison"],[89,"Muk","poison"],[90,"Shellder","water"],[91,"Cloyster","water"],[92,"Gastly","ghost"],[93,"Haunter","ghost"],[94,"Gengar","ghost"],[95,"Onix","rock"],[96,"Drowzee","psychic"],[97,"Hypno","psychic"],[98,"Krabby","water"],[99,"Kingler","water"],[100,"Voltorb","electric"],[101,"Electrode","electric"],[102,"Exeggcute","grass"],[103,"Exeggutor","grass"],[104,"Cubone","ground"],[105,"Marowak","ground"],[106,"Hitmonlee","fighting"],[107,"Hitmonchan","fighting"],[108,"Lickitung","normal"],[109,"Koffing","poison"],[110,"Weezing","poison"],[111,"Rhyhorn","ground"],[112,"Rhydon","ground"],[113,"Chansey","normal"],[114,"Tangela","grass"],[115,"Kangaskhan","normal"],[116,"Horsea","water"],[117,"Seadra","water"],[118,"Goldeen","water"],[119,"Seaking","water"],[120,"Staryu","water"],[121,"Starmie","water"],[122,"Mr. Mime","psychic"],[123,"Scyther","bug"],[124,"Jynx","ice"],[125,"Electabuzz","electric"],[126,"Magmar","fire"],[127,"Pinsir","bug"],[128,"Tauros","normal"],[129,"Magikarp","water"],[130,"Gyarados","water"],[131,"Lapras","water"],[132,"Ditto","normal"],[133,"Eevee","normal"],[134,"Vaporeon","water"],[135,"Jolteon","electric"],[136,"Flareon","fire"],[137,"Porygon","normal"],[138,"Omanyte","rock"],[139,"Omastar","rock"],[140,"Kabuto","rock"],[141,"Kabutops","rock"],[142,"Aerodactyl","rock"],[143,"Snorlax","normal"],[144,"Articuno","ice"],[145,"Zapdos","electric"],[146,"Moltres","fire"],[147,"Dratini","dragon"],[148,"Dragonair","dragon"],[149,"Dragonite","dragon"],[150,"Mewtwo","psychic"],[151,"Mew","psychic"]
+].map(([id,name,type])=>({id,name,type,generation:1,img:`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`}));
+const fallbackGen1 = pokemon.slice();
+const generationNames = {1:"Kanto",2:"Johto",3:"Hoenn",4:"Sinnoh",5:"Unova",6:"Kalos",7:"Alola",8:"Galar",9:"Paldea"};
+const generationRanges = {1:"#1–151",2:"#152–251",3:"#252–386",4:"#387–493",5:"#494–649",6:"#650–721",7:"#722–809",8:"#810–905",9:"#906–1025"};
+const pokemonByGeneration = {1:fallbackGen1};
+let activeGeneration = 1;
+let team={};let selectedSlot=null;
+const pitch=document.getElementById('pitch'), list=document.getElementById('pokemonList');
+const formation=document.getElementById('formation');
+function currentSlots(){return formations[formation.value].lines.flat();}
+function positionCoords(lines){
+ const coords=[]; const top=17,bottom=83;
+ lines.forEach((line,i)=>{const y=top+(bottom-top)*(i/(lines.length-1));line.forEach((pos,j)=>{const x=line.length===1?50:20+(60*j/(line.length-1));coords.push({pos,x,y});});});
+ return coords;
+}
+function renderPitch(){
+ pitch.querySelectorAll('.slot').forEach(e=>e.remove());
+ const coords=positionCoords(formations[formation.value].lines);
+ coords.forEach((c,i)=>{
+  const p=team[c.pos];const el=document.createElement('div');el.className='slot '+(p?'':'empty')+(selectedSlot===c.pos?' selected':'');
+  el.style.left=c.x+'%';el.style.top=c.y+'%';el.setAttribute('role','button');el.setAttribute('tabindex','0');el.setAttribute('aria-label',`${roleNames[c.pos]||c.pos}: ${p?p.name:'empty'}`);
+  el.innerHTML=`<div class="slot-card">${p?`<span class="num">${i+1}</span><img alt="" src="${p.img}">`:'<span class="plus">+</span>'}</div><div class="name">${p?p.name:'Add Pokémon'}</div><div class="position">${c.pos}</div>`;
+  el.onclick=()=>{selectedSlot=c.pos;document.getElementById('slotLabel').textContent=c.pos+' · '+(roleNames[c.pos]||c.pos);document.getElementById('pickerTitle').textContent='PICK FOR '+c.pos;document.getElementById('remove').disabled=!team[c.pos];renderPitch();const rolled=1+Math.floor(Math.random()*9);showGeneration(rolled,`🎲 Generation rolled: Gen ${rolled} · ${generationNames[rolled]} (${generationRanges[rolled]}). Now choose a Pokémon for ${c.pos}, or roll again.`);};
+  el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();el.click();}};
+  pitch.appendChild(el);
+ });
+ updateSummary();
+}
+async function loadGenerationData(genId){
+ if(pokemonByGeneration[genId]) return pokemonByGeneration[genId];
+ const listEl=document.getElementById('pokemonList');
+ listEl.innerHTML='<div class="empty-state">Loading Generation '+genId+' Pokémon…</div>';
+ try{
+  const response=await fetch(`https://pokeapi.co/api/v2/generation/${genId}/`);
+  if(!response.ok) throw new Error('PokéAPI response was not successful');
+  const data=await response.json();
+  const items=data.pokemon_species.map(species=>{
+   const match=species.url.match(/pokemon-species\/(\d+)\/?$/);
+   const id=match?Number(match[1]):0;
+   const name=species.name.split('-').map(part=>part.charAt(0).toUpperCase()+part.slice(1)).join(' ');
+   return {id,name,type:'unknown',types:[],generation:genId,img:`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`};
+  }).filter(p=>p.id>0).sort((a,b)=>a.id-b.id);
+  pokemonByGeneration[genId]=items;
+  return items;
+ }catch(err){
+  if(genId===1){pokemonByGeneration[1]=fallbackGen1;return fallbackGen1;}
+  listEl.innerHTML='<div class="empty-state">Could not load this generation. Check your internet connection and try again.</div>';
+  return [];
+ }
+}
+async function ensureTypes(genId){
+ const items=pokemonByGeneration[genId]||[];
+ const unknown=items.filter(p=>p.type==='unknown');
+ // Fetch in small batches only when the user asks for a type filter.
+ for(let i=0;i<unknown.length;i+=10){
+  await Promise.all(unknown.slice(i,i+10).map(async p=>{
+   try{const r=await fetch(`https://pokeapi.co/api/v2/pokemon/${p.id}/`);if(r.ok){const d=await r.json();p.types=(d.types||[]).map(x=>x.type.name);p.type=p.types[0]||'unknown';}}
+   catch(e){/* leave type unknown if a request fails */}
+  }));
+ }
+}
+async function showGeneration(genId, message){
+ activeGeneration=Number(genId);
+ document.getElementById('generationSelect').value=String(activeGeneration);
+ document.getElementById('search').value='';
+ document.getElementById('typeFilter').value='';
+ const note=document.getElementById('generationNote');
+ note.textContent=message||`Generation ${activeGeneration} · ${generationNames[activeGeneration]} · ${generationRanges[activeGeneration]}. Pick a Pokémon for ${selectedSlot||'your selected position'}.`;
+ await loadGenerationData(activeGeneration);
+ pokemon=pokemonByGeneration[activeGeneration]||[];
+ renderList();
+}
+function renderList(){
+ const q=document.getElementById('search').value.trim().toLowerCase(),t=document.getElementById('typeFilter').value;
+ const current=pokemonByGeneration[activeGeneration]||pokemon;
+ const shown=current.filter(p=>(!q||p.name.toLowerCase().includes(q)||String(p.id)===q)&&(!t||(p.types||[p.type]).includes(t)));
+ list.innerHTML='';
+ if(!shown.length){list.innerHTML='<div class="empty-state">No Pokémon match. If you just changed generations, wait a moment and try again.</div>';return;}
+ shown.forEach(p=>{
+  const assigned=Object.keys(team).find(k=>team[k].id===p.id);
+  const b=document.createElement('button');b.className='poke'+(assigned?' chosen':'');b.disabled=!!assigned&&assigned!==selectedSlot;
+  b.innerHTML=`<img loading="lazy" src="${p.img}" alt=""><span style="min-width:0"><span class="poke-name">${p.name}</span><small>#${String(p.id).padStart(4,'0')} · Gen ${p.generation}${p.type!=='unknown'?' · '+p.type:''}${assigned?' · '+assigned:''}</small></span>`;
+  b.onclick=()=>{if(!selectedSlot){selectedSlot=currentSlots().find(s=>!team[s])||currentSlots()[0];}if(assigned&&assigned!==selectedSlot)return;team[selectedSlot]=p;document.getElementById('remove').disabled=false;document.getElementById('slotLabel').textContent=selectedSlot+' · '+p.name;document.getElementById('generationNote').textContent=`${p.name} selected for ${selectedSlot}. You can change it or choose another Pokémon.`;renderPitch();renderList();};
+  list.appendChild(b);
+ });
+}
+function updateSummary(){
+ const slots=currentSlots(),n=slots.filter(s=>team[s]).length;
+ document.getElementById('teamStatus').textContent=`${n} / 11 selected`;document.getElementById('count').textContent=`${n}/11`;document.getElementById('filled').textContent=Math.round(n/11*100)+'%';document.getElementById('formationStat').textContent=formation.value;
+ const tl=document.getElementById('teamList');tl.innerHTML='';
+ slots.forEach((s,i)=>{const p=team[s];const item=document.createElement('div');item.className='team-item';item.innerHTML=p?`<img src="${p.img}" alt=""><span><b>${s}</b> ${p.name}</span>`:`<span style="padding:8px 4px;color:#8396b0"><b>${s}</b> Empty</span>`;item.title=roleNames[s]||s;item.onclick=()=>{selectedSlot=s;document.getElementById('slotLabel').textContent=s+' · '+(roleNames[s]||s);document.getElementById('pickerTitle').textContent='PICK FOR '+s;document.getElementById('remove').disabled=!team[s];renderPitch();renderList();};item.style.cursor='pointer';tl.appendChild(item);});
+}
+formation.addEventListener('change',()=>{const allowed=currentSlots();const next={};allowed.forEach(s=>{if(team[s])next[s]=team[s];});team=next;selectedSlot=null;document.getElementById('slotLabel').textContent='Select a position';document.getElementById('pickerTitle').textContent='CHOOSE A POKÉMON';document.getElementById('remove').disabled=true;renderPitch();renderList();});
+document.getElementById('search').addEventListener('input',renderList);
+document.getElementById('generationSelect').addEventListener('change',e=>showGeneration(Number(e.target.value)));
+document.getElementById('randomGeneration').addEventListener('click',()=>{const rolled=1+Math.floor(Math.random()*9);showGeneration(rolled,`🎲 Generation rolled: Gen ${rolled} · ${generationNames[rolled]} (${generationRanges[rolled]}). Now choose a Pokémon${selectedSlot?' for '+selectedSlot:''}.`);});
+document.getElementById('typeFilter').addEventListener('change',async()=>{const type=document.getElementById('typeFilter').value;if(type){document.getElementById('generationNote').textContent='Loading Pokémon types for this generation…';await ensureTypes(activeGeneration);}renderList();});
+document.getElementById('remove').onclick=()=>{if(selectedSlot){delete team[selectedSlot];document.getElementById('remove').disabled=true;renderPitch();renderList();}};
+document.getElementById('clear').onclick=()=>{team={};selectedSlot=null;document.getElementById('slotLabel').textContent='Select a position';document.getElementById('pickerTitle').textContent='CHOOSE A POKÉMON';document.getElementById('generationNote').textContent='Choose a position to roll a generation, then pick a Pokémon.';document.getElementById('remove').disabled=true;renderPitch();renderList();};
+document.getElementById('random').onclick=async()=>{const btn=document.getElementById('random');btn.disabled=true;btn.textContent='Loading Pokémon…';try{const groups=await Promise.all(Array.from({length:9},(_,i)=>loadGenerationData(i+1)));const all=groups.flat();const shuffled=[...all].sort(()=>Math.random()-.5);team={};currentSlots().forEach((s,i)=>team[s]=shuffled[i]);selectedSlot=null;document.getElementById('generationNote').textContent='Random XI selected from all nine Pokémon generations.';renderPitch();renderList();}finally{btn.disabled=false;btn.textContent='Random XI';}};
+document.getElementById('copy').onclick=async()=>{const textOut=`PokéXI Starting XI (${formation.value})\n`+currentSlots().map((s,i)=>`${i+1}. ${roleNames[s]||s} (${s}): ${team[s]?.name||'Empty'}`).join('\n');const msg=document.getElementById('copyMsg');try{await navigator.clipboard.writeText(textOut);msg.textContent='Starting XI copied to clipboard!';}catch(e){msg.textContent=textOut;}};
+renderPitch();showGeneration(1,'Generation 1 selected. Choose a position to roll a generation, or use the selector to browse any generation.');
+</script>
+</body>
+</html>
